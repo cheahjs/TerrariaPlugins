@@ -53,6 +53,7 @@ namespace AddWorldFeatures
                 {
                     case "addSnow":
                         WriteSnow();
+                        UpdateFrames();
                         break;
                     case "convertSnow":
                         bool doet;
@@ -60,6 +61,7 @@ namespace AddWorldFeatures
                         {
                             ConfirmAction.Remove("convertSnow");
                             OverwriteSnow();
+                            UpdateFrames();
                         }
                         else
                         {
@@ -72,6 +74,7 @@ namespace AddWorldFeatures
                         {
                             ConfirmAction.Remove("convertWorldSnow");
                             OverwriteSnowTotal();
+                            UpdateFrames();
                         }
                         else
                         {
@@ -84,22 +87,27 @@ namespace AddWorldFeatures
                         break;
                     case "addDungeon":
                         WorldGen.MakeDungeon((int) (toolkit.GetPlayer().position.X/16), (int) (toolkit.GetPlayer().position.Y/16));
+                        UpdateFrames();
                         Main.NewText("Made a dungeon.");
                         break;
                     case "addHell":
                         WorldGen.HellHouse((int) (toolkit.GetPlayer().position.X/16), (int) (toolkit.GetPlayer().position.Y/16));
+                        UpdateFrames();
                         Main.NewText("Made a hell house.");
                         break;
                     case "addIsland":
                         WorldGen.FloatingIsland((int) (toolkit.GetPlayer().position.X/16), (int) (toolkit.GetPlayer().position.Y/16));
+                        UpdateFrames();
                         Main.NewText("Made a floating island.");
                         break;
                     case "addIslandHouse":
                         WorldGen.IslandHouse((int) (toolkit.GetPlayer().position.X/16), (int) (toolkit.GetPlayer().position.Y/16));
+                        UpdateFrames();
                         Main.NewText("Made a floating island house.");
                         break;
                     case "addMineHouse":
                         WorldGen.MineHouse((int)(toolkit.GetPlayer().position.X / 16), (int)(toolkit.GetPlayer().position.Y / 16));
+                        UpdateFrames();
                         Main.NewText("Made a mine house.");
                         break;
                     case "startHm":
@@ -115,9 +123,11 @@ namespace AddWorldFeatures
                         break;
                     case "convertCorruption":
                         ConvertCorruption();
+                        UpdateFrames();
                         break;
                     case "convertHallow":
                         ConvertHallow();
+                        UpdateFrames();
                         break;
                 }
             }
@@ -202,7 +212,7 @@ namespace AddWorldFeatures
             Main.NewText("Overwritten all solid tiles to snow.", 0, 255, 0);
         }
 
-        private static void ConvertCorruption()
+        private void ConvertCorruption()
         {
             for (int x = 0; x < Main.maxTilesX; x++)
             {
@@ -229,7 +239,7 @@ namespace AddWorldFeatures
             Main.NewText("Corruption converted to hallow.");
         }
 
-        private static void ConvertHallow()
+        private void ConvertHallow()
         {
             for (int x = 0; x < Main.maxTilesX; x++)
             {
@@ -290,6 +300,11 @@ namespace AddWorldFeatures
             Player.SavePlayer(Main.player[Main.myPlayer], Main.playerPathName);
             Main.PlaySound(10, -1, -1, 1);
             Main.menuMode = 0;
+        }
+
+        public void UpdateFrames()
+        {
+            WorldGen.EveryTileFrame();
         }
     }
 }
