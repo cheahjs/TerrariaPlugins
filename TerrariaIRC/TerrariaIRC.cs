@@ -2,6 +2,7 @@
 using Hooks;
 using Meebey.SmartIrc4net;
 using TShockAPI;
+using Terraria;
 
 namespace TerrariaIRC
 {
@@ -27,6 +28,8 @@ namespace TerrariaIRC
         {
             get { return new Version(1, 0, 0, 0); }
         }
+        public TerrariaIRC(Main game) : base(game)
+        {}
         #endregion
 
         #region Plugin Vars
