@@ -304,7 +304,6 @@ namespace AddWorldFeatures
 
         public void UpdateFrames()
         {
-            WorldGen.EveryTileFrame();
         }
     }
 }
