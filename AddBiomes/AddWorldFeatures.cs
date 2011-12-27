@@ -41,6 +41,8 @@ namespace AddWorldFeatures
             api.AddOption(this, "Stop Hardmode", "stopHm", 2);
             api.AddOption(this, "Convert Corruption to Hallow", "convertCorruption", 2);
             api.AddOption(this, "Convert Hallow to Corruption", "convertHallow", 2);
+            api.AddOption(this, "Start Goblin Invasion", "startGoblin", 2);
+            api.AddOption(this, "Start Frost Legion Invasion", "startFrost", 2);
             api.AddOption(this, "Quit Without Saving World", "exitNoSave", 2);
         }
 
@@ -128,6 +130,14 @@ namespace AddWorldFeatures
                     case "convertHallow":
                         ConvertHallow();
                         UpdateFrames();
+                        break;
+                    case "startGoblin":
+                        Main.StartInvasion(1);
+                        Main.NewText("Started a goblin invasion.");
+                        break;
+                    case "startFrost":
+                        Main.StartInvasion(2);
+                        Main.NewText("Started a Frost Legion invasion.");
                         break;
                 }
             }
