@@ -9,8 +9,9 @@ namespace AddWorldFeatures
     {
         #region Vars
 
-        private Dictionary<string, bool> ConfirmAction = new Dictionary<string, bool>();
+        private readonly Dictionary<string, bool> ConfirmAction = new Dictionary<string, bool>();
         private Toolkit toolkit;
+        public bool xMas = true;
 
         #endregion
 
@@ -21,7 +22,7 @@ namespace AddWorldFeatures
 
         public override string GetVersion()
         {
-            return "1.1";
+            return "1.2";
         }
 
         public override void Initialize(TehModAPI api)
@@ -43,7 +44,14 @@ namespace AddWorldFeatures
             api.AddOption(this, "Convert Hallow to Corruption", "convertHallow", 2);
             api.AddOption(this, "Start Goblin Invasion", "startGoblin", 2);
             api.AddOption(this, "Start Frost Legion Invasion", "startFrost", 2);
+            api.AddOption(this, "Stop Invasion", "stopInvade", 2);
+            api.AddOption(this, "Christmas", "xMas", 0);
             api.AddOption(this, "Quit Without Saving World", "exitNoSave", 2);
+        }
+
+        public override void EnterMainMenu(TehModAPI api)
+        {
+            xMas = Main.xMas;
         }
 
         public override void ModMenuAction(TehModAPI api, MenuOption opt)
@@ -108,7 +116,7 @@ namespace AddWorldFeatures
                         Main.NewText("Made a floating island house.");
                         break;
                     case "addMineHouse":
-                        WorldGen.MineHouse((int)(toolkit.GetPlayer().position.X / 16), (int)(toolkit.GetPlayer().position.Y / 16));
+                        WorldGen.MineHouse((int) (toolkit.GetPlayer().position.X/16), (int) (toolkit.GetPlayer().position.Y/16));
                         UpdateFrames();
                         Main.NewText("Made a mine house.");
                         break;
@@ -132,12 +140,19 @@ namespace AddWorldFeatures
                         UpdateFrames();
                         break;
                     case "startGoblin":
-                        Main.StartInvasion(1);
+                        Main.StartInvasion();
                         Main.NewText("Started a goblin invasion.");
                         break;
                     case "startFrost":
                         Main.StartInvasion(2);
                         Main.NewText("Started a Frost Legion invasion.");
+                        break;
+                    case "stopInvade":
+                        Main.invasionSize = 0;
+                        Main.NewText("Invasion has been stopped.");
+                        break;
+                    case "xMas":
+                        Main.xMas = xMas;
                         break;
                 }
             }
@@ -147,6 +162,11 @@ namespace AddWorldFeatures
             }
         }
 
+        public override void PostUpdate(TehModAPI api, Microsoft.Xna.Framework.GameTime gameTime)
+        {
+            Main.xMas = xMas;
+        }
+
         public void WriteSnow()
         {
             int xpos = WorldGen.genRand.Next(Main.maxTilesX);
@@ -154,7 +174,7 @@ namespace AddWorldFeatures
                 xpos = WorldGen.genRand.Next(Main.maxTilesX);
 
             int num34 = WorldGen.genRand.Next(35, 90);
-            float num35 = (Main.maxTilesX/4200);
+            float num35 = Main.maxTilesX/4200;
             num34 += (int) (WorldGen.genRand.Next(20, 40)*num35);
             num34 += (int) (WorldGen.genRand.Next(20, 40)*num35);
             int num36 = xpos - num34;
