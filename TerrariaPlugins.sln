@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TShock", "TShock", "{66B4E2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrariaIRC", "TerrariaIRC\TerrariaIRC.csproj", "{096EA8EF-69A5-4F55-BFA5-E2A84698F4A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortableTerraria", "PortableTerraria\PortableTerraria.csproj", "{62A447F9-C384-47AE-92D3-8046EDB27614}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{096EA8EF-69A5-4F55-BFA5-E2A84698F4A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{096EA8EF-69A5-4F55-BFA5-E2A84698F4A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{096EA8EF-69A5-4F55-BFA5-E2A84698F4A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62A447F9-C384-47AE-92D3-8046EDB27614}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62A447F9-C384-47AE-92D3-8046EDB27614}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62A447F9-C384-47AE-92D3-8046EDB27614}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62A447F9-C384-47AE-92D3-8046EDB27614}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -36,6 +42,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{6111B9EA-BA12-48F9-9E8F-6F4000528FB1} = {AAEF2E4D-9A2A-49EF-9B7E-0476AE1B85FA}
 		{A9929626-9929-4D5B-BFC6-C9E545D58E70} = {AAEF2E4D-9A2A-49EF-9B7E-0476AE1B85FA}
+		{62A447F9-C384-47AE-92D3-8046EDB27614} = {AAEF2E4D-9A2A-49EF-9B7E-0476AE1B85FA}
 		{096EA8EF-69A5-4F55-BFA5-E2A84698F4A9} = {66B4E226-759F-4D41-B941-5C5A71032CC2}
 	EndGlobalSection
 EndGlobal

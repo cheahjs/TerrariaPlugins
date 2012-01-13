@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Add World Features")]
-[assembly: AssemblyDescription("Plugin for TehModAPI for Terraria")]
+[assembly: AssemblyTitle("PortableTerraria")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Deathmax")]
-[assembly: AssemblyProduct("AddWorldFeatures")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyProduct("PortableTerraria")]
+[assembly: AssemblyCopyright("Copyright © Microsoft 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("a49ec98f-a9e6-44cb-9f11-ee1c63d88306")]
+[assembly: Guid("9b39dc67-cf90-4f06-9ac4-c86026c79cca")]
 
 // Version information for an assembly consists of the following four values:
 //

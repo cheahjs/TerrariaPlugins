@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Terraria;
 using TerrariaAPI;
 
@@ -22,7 +23,7 @@ namespace AddWorldFeatures
 
         public override string GetVersion()
         {
-            return "1.2";
+            return "1.3";
         }
 
         public override void Initialize(TehModAPI api)
@@ -41,7 +42,9 @@ namespace AddWorldFeatures
             api.AddOption(this, "Start Hardmode (No Biome Changes)", "startHm2", 2);
             api.AddOption(this, "Stop Hardmode", "stopHm", 2);
             api.AddOption(this, "Convert Corruption to Hallow", "convertCorruption", 2);
+            api.AddOption(this, "Convert Corruption to Normal", "convertCorruptionNormal", 2);
             api.AddOption(this, "Convert Hallow to Corruption", "convertHallow", 2);
+            api.AddOption(this, "Convert Hallow to Normal", "convertHallowNormal", 2);
             api.AddOption(this, "Start Goblin Invasion", "startGoblin", 2);
             api.AddOption(this, "Start Frost Legion Invasion", "startFrost", 2);
             api.AddOption(this, "Stop Invasion", "stopInvade", 2);
@@ -139,6 +142,14 @@ namespace AddWorldFeatures
                         ConvertHallow();
                         UpdateFrames();
                         break;
+                    case "convertCorruptionNormal":
+                        ConvertCorruptionNormal();
+                        UpdateFrames();
+                        break;
+                    case "convertHallowNormal":
+                        ConvertHallowNormal();
+                        UpdateFrames();
+                        break;
                     case "startGoblin":
                         Main.StartInvasion();
                         Main.NewText("Started a goblin invasion.");
@@ -162,7 +173,7 @@ namespace AddWorldFeatures
             }
         }
 
-        public override void PostUpdate(TehModAPI api, Microsoft.Xna.Framework.GameTime gameTime)
+        public override void PostUpdate(TehModAPI api, GameTime gameTime)
         {
             Main.xMas = xMas;
         }
@@ -242,7 +253,7 @@ namespace AddWorldFeatures
             Main.NewText("Overwritten all solid tiles to snow.", 0, 255, 0);
         }
 
-        private void ConvertCorruption()
+        private static void ConvertCorruption()
         {
             for (int x = 0; x < Main.maxTilesX; x++)
             {
@@ -269,7 +280,7 @@ namespace AddWorldFeatures
             Main.NewText("Corruption converted to hallow.");
         }
 
-        private void ConvertHallow()
+        private static void ConvertHallow()
         {
             for (int x = 0; x < Main.maxTilesX; x++)
             {
@@ -294,6 +305,60 @@ namespace AddWorldFeatures
             WorldGen.CountTiles(0);
             WorldGen.CountTiles(0);
             Main.NewText("Hallow converted to corruption.");
+        }
+
+        private static void ConvertCorruptionNormal()
+        {
+            for (int x = 0; x < Main.maxTilesX; x++)
+            {
+                for (int y = 0; y < Main.maxTilesY; y++)
+                {
+                    switch (Main.tile[x, y].type)
+                    {
+                        case 25:
+                            Main.tile[x, y].type = 1;
+                            break;
+                        case 23:
+                            Main.tile[x, y].type = 2;
+                            break;
+                        case 112:
+                            Main.tile[x, y].type = 53;
+                            break;
+                        default:
+                            continue;
+                    }
+                }
+            }
+            WorldGen.CountTiles(0);
+            WorldGen.CountTiles(0);
+            Main.NewText("Corruption converted to normal.");
+        }
+
+        private static void ConvertHallowNormal()
+        {
+            for (int x = 0; x < Main.maxTilesX; x++)
+            {
+                for (int y = 0; y < Main.maxTilesY; y++)
+                {
+                    switch (Main.tile[x, y].type)
+                    {
+                        case 117:
+                            Main.tile[x, y].type = 1;
+                            break;
+                        case 109:
+                            Main.tile[x, y].type = 2;
+                            break;
+                        case 116:
+                            Main.tile[x, y].type = 53;
+                            break;
+                        default:
+                            continue;
+                    }
+                }
+            }
+            WorldGen.CountTiles(0);
+            WorldGen.CountTiles(0);
+            Main.NewText("Hallow converted to normal.");
         }
 
         public bool TileValidSnowBiome(int type)
