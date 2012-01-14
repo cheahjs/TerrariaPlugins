@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using Hooks;
 using Meebey.SmartIrc4net;
 using TShockAPI;
@@ -32,7 +33,9 @@ namespace TerrariaIRC
             get { return new Version(1, 0, 0, 0); }
         }
         public TerrariaIRC(Main game) : base(game)
-        {}
+        {
+            Order = 10;
+        }
         #endregion
 
         #region Plugin Vars
@@ -44,18 +47,21 @@ namespace TerrariaIRC
         #region Plugin overrides
         public override void Initialize()
         {
+            ServerHooks.Chat += OnChat;
+            TShock.Players = new TSPlayer[Main.maxNetPlayers + 1];
+            TShock.Players[Main.maxNetPlayers] = new IRCPlayer {Group = new SuperAdminGroup()};
             irc.Encoding = System.Text.Encoding.ASCII;
             irc.SendDelay = 300;
             irc.ActiveChannelSyncing = true;
             irc.OnQueryMessage += OnQueryMessage;
             irc.OnError += OnError;
-            irc.OnRawMessage += OnRawMessage;
+            irc.OnChannelMessage += OnChannelMessage;
             if (!settings.Load())
             {
                 Console.WriteLine("Settings failed to load, aborting IRC.");
                 return;
             }
-            Connect();
+            new Thread(Connect).Start();
         }
 
         protected override void Dispose(bool disposing)
@@ -66,19 +72,19 @@ namespace TerrariaIRC
         }
         #endregion
 
+        #region IRC methods
         public static void OnQueryMessage(object sender, IrcEventArgs e)
         {
-            Console.WriteLine("Query: {0}", e.Data.RawMessage);
         }
 
         public static void OnError(object sender, ErrorEventArgs e)
         {
-            Console.WriteLine("Error: {0}", e.Data.RawMessage);
+            Console.WriteLine("IRC Error: {0}", e.Data.RawMessage);
         }
 
-        public static void OnRawMessage(object sender, IrcEventArgs e)
+        void OnChannelMessage(object sender, IrcEventArgs e)
         {
-            Console.WriteLine("Raw: {0}", e.Data.RawMessage);
+            TShock.Utils.Broadcast(string.Format("(IRC)<{0}> {1}", e.Data.Nick, TShock.Utils.SanitizeString(e.Data.Message)));
         }
 
         public void Connect()
@@ -104,5 +110,23 @@ namespace TerrariaIRC
                 Console.WriteLine("Disconnected from IRC... Attempting to reconnect");
             }
         }
+        #endregion
+
+        #region Plugin hooks
+        void OnChat(messageBuffer msg, int player, string text, System.ComponentModel.HandledEventArgs e)
+        {
+            var tsplr = TShock.Players[msg.whoAmI];
+            if (tsplr == null)
+                return;
+            if (!TShock.Utils.ValidString(text))
+                return;
+            if (text.StartsWith("/"))
+                return;
+            if (tsplr.mute)
+                return;
+            irc.SendMessage(SendType.Message, settings["channel"], string.Format("({0}){1}: {2}", 
+                tsplr.Group.Name, tsplr.Name, text));
+        }
+        #endregion
     }
 }
