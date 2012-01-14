@@ -43,6 +43,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Settings.cs" />
     <Compile Include="TerrariaIRC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
