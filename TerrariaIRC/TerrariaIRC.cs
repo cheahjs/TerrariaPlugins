@@ -77,6 +77,10 @@ namespace TerrariaIRC
         public static void OnQueryMessage(object sender, IrcEventArgs e)
         {
             var message = e.Data.Message;
+            if (IsAllowed(e.Data.Nick))
+            {
+                
+            }
         }
 
         public static void OnError(object sender, ErrorEventArgs e)
@@ -96,7 +100,7 @@ namespace TerrariaIRC
                 TShock.Utils.Broadcast(string.Format("(IRC)<{0}> {1}", e.Data.Nick, TShock.Utils.SanitizeString(e.Data.Message)), Color.Green);
         }
 
-        public void Connect()
+        public static void Connect()
         {
             while (true)
             {
@@ -121,7 +125,7 @@ namespace TerrariaIRC
             }
         }
 
-        public bool IsAllowed(string nick)
+        public static bool IsAllowed(string nick)
         {
             if (bool.Parse(settings["allowop"]))
             {
@@ -134,7 +138,7 @@ namespace TerrariaIRC
             return false;
         }
 
-        public bool CompareIrcUser(IrcUser user1, IrcUser user2)
+        public static bool CompareIrcUser(IrcUser user1, IrcUser user2)
         {
             return (user1.Host == user2.Host && user1.Ident == user2.Ident && user1.Realname == user2.Realname);
         }
@@ -143,6 +147,7 @@ namespace TerrariaIRC
         #region Plugin hooks
         void OnChat(messageBuffer msg, int player, string text, System.ComponentModel.HandledEventArgs e)
         {
+            if (!irc.IsConnected) return;
             var tsplr = TShock.Players[msg.whoAmI];
             if (tsplr == null)
                 return;
@@ -158,6 +163,7 @@ namespace TerrariaIRC
 
         void OnJoin(int player, System.ComponentModel.HandledEventArgs e)
         {
+            if (!irc.IsConnected) return;
             if (e.Handled) return;
             irc.SendMessage(SendType.Message, settings["channel"], string.Format("{0} joined the server.", 
                 Main.player[player].name));
@@ -165,6 +171,7 @@ namespace TerrariaIRC
 
         void OnLeave(int player)
         {
+            if (!irc.IsConnected) return;
             irc.SendMessage(SendType.Message, settings["channel"], string.Format("{0} left the server.",
                 Main.player[player].name));
         }
