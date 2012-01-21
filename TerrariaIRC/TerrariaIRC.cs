@@ -86,7 +86,7 @@ namespace TerrariaIRC
                 if (message.StartsWith("!"))
                 {
                     var user = new IRCPlayer(e.Data.Nick) {Group = new SuperAdminGroup()};
-                    TShockAPI.Commands.HandleCommand(user, message.TrimStart('!') + "/");
+                    TShockAPI.Commands.HandleCommand(user, "/" + message.TrimStart('!'));
                     foreach (var t in user.Output)
                         irc.RfcPrivmsg(e.Data.Nick, t);
                 }
