@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Hooks;
 using Meebey.SmartIrc4net;
@@ -57,6 +60,7 @@ namespace TerrariaIRC
             irc.OnQueryMessage += OnQueryMessage;
             irc.OnError += OnError;
             irc.OnChannelMessage += OnChannelMessage;
+            irc.OnRawMessage += OnRawMessage;
             if (!settings.Load())
             {
                 Console.WriteLine("Settings failed to load, aborting IRC.");
@@ -79,8 +83,16 @@ namespace TerrariaIRC
             var message = e.Data.Message;
             if (IsAllowed(e.Data.Nick))
             {
-                
+                if (message.StartsWith("!"))
+                {
+                    var user = new IRCPlayer(e.Data.Nick) {Group = new SuperAdminGroup()};
+                    TShockAPI.Commands.HandleCommand(user, message.TrimStart('!') + "/");
+                    foreach (var t in user.Output)
+                        irc.RfcPrivmsg(e.Data.Nick, t);
+                }
             }
+            else
+                irc.RfcPrivmsg(e.Data.Nick, "You are not allowed to perform that action.");
         }
 
         public static void OnError(object sender, ErrorEventArgs e)
@@ -97,7 +109,13 @@ namespace TerrariaIRC
                 irc.SendMessage(SendType.Message, settings["channel"], "Current Players: " + reply);
             }
             else
-                TShock.Utils.Broadcast(string.Format("(IRC)<{0}> {1}", e.Data.Nick, TShock.Utils.SanitizeString(e.Data.Message)), Color.Green);
+                TShock.Utils.Broadcast(string.Format("(IRC)<{0}> {1}", e.Data.Nick, 
+                    TShock.Utils.SanitizeString(Regex.Replace(message, (char)3 + "[0-9]{1,2}(,[0-9]{1,2})?", String.Empty))), Color.Green);
+        }
+
+        void OnRawMessage(object sender, IrcEventArgs e)
+        {
+            Debug.Write(e.Data.RawMessage);
         }
 
         public static void Connect()
@@ -108,6 +126,7 @@ namespace TerrariaIRC
                 try
                 {
                     irc.Connect(settings["server"], int.Parse(settings["port"]));
+                    irc.ListenOnce();
                     Console.WriteLine("Connected to IRC server.");
                 }
                 catch (Exception e)
@@ -117,9 +136,16 @@ namespace TerrariaIRC
                     return;
                 }
                 irc.Login(settings["botname"], "TerrariaIRC");
+                irc.ListenOnce();
                 Console.WriteLine("Trying to join {0}...", settings["channel"]);
                 irc.RfcJoin(settings["channel"]);
+                irc.ListenOnce();
                 Console.WriteLine("Joined {0}", settings["channel"]);
+                if (settings.ContainsKey("nickserv") && settings.ContainsKey("password"))
+                {
+                    irc.RfcPrivmsg(settings["nickserv"], settings["password"]);
+                    irc.ListenOnce();
+                }
                 irc.Listen();
                 Console.WriteLine("Disconnected from IRC... Attempting to reconnect");
             }
@@ -127,14 +153,11 @@ namespace TerrariaIRC
 
         public static bool IsAllowed(string nick)
         {
+            //Theres an issue with IsOp, if the ircd has anything higher like +a, IsOp will return false;
             if (bool.Parse(settings["allowop"]))
             {
-                if (irc.GetChannel(settings["channel"]).Users.Cast<object>().Any(user => ((ChannelUser)user).IsOp))
-                {
-                    return true;
-                }
+                return (from user in (from DictionaryEntry channeluser in irc.GetChannel(settings["channel"]).Users select (ChannelUser) channeluser.Value) where user.Nick == nick select user.IsOp).FirstOrDefault();
             }
-            var ircuser = irc.GetIrcUser(nick);
             return false;
         }
 
