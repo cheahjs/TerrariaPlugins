@@ -46,6 +46,7 @@ namespace TerrariaIRC
         public static IrcClient irc = new IrcClient();
         private static Settings settings = new Settings();
         public static string settingsfiles = Path.Combine(TShock.SavePath, "irc", "settings.txt");
+        public static bool Connect = true;
         #endregion
 
         #region Plugin overrides
@@ -57,13 +58,14 @@ namespace TerrariaIRC
             irc.Encoding = System.Text.Encoding.ASCII;
             irc.SendDelay = 300;
             irc.ActiveChannelSyncing = true;
+            irc.AutoRejoinOnKick = true;
             irc.OnQueryMessage += OnQueryMessage;
             irc.OnError += OnError;
             irc.OnChannelMessage += OnChannelMessage;
             irc.OnRawMessage += OnRawMessage;
             if (!settings.Load())
             {
-                Console.WriteLine("Settings failed to load, aborting IRC.");
+                Console.WriteLine("Settings failed to load, aborting IRC connection.");
                 return;
             }
             new Thread(Connect).Start();
@@ -73,6 +75,9 @@ namespace TerrariaIRC
         {
             if (disposing)
             {
+                Connect = false;
+                if (irc.IsConnected)
+                    irc.Disconnect();
             }
         }
         #endregion
@@ -120,7 +125,7 @@ namespace TerrariaIRC
 
         public static void Connect()
         {
-            while (true)
+            while (Connect)
             {
                 Console.WriteLine("Connecting to {0}:{1}...", settings["server"], settings["port"]);
                 try
