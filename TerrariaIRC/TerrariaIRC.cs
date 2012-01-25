@@ -46,7 +46,7 @@ namespace TerrariaIRC
         public static IrcClient irc = new IrcClient();
         private static Settings settings = new Settings();
         public static string settingsfiles = Path.Combine(TShock.SavePath, "irc", "settings.txt");
-        public static bool Connect = true;
+        public static bool StayConnected = true;
         #endregion
 
         #region Plugin overrides
@@ -73,12 +73,10 @@ namespace TerrariaIRC
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                Connect = false;
-                if (irc.IsConnected)
-                    irc.Disconnect();
-            }
+            if (!disposing) return;
+            StayConnected = false;
+            if (irc.IsConnected)
+                irc.Disconnect();
         }
         #endregion
 
@@ -125,7 +123,7 @@ namespace TerrariaIRC
 
         public static void Connect()
         {
-            while (Connect)
+            while (StayConnected)
             {
                 Console.WriteLine("Connecting to {0}:{1}...", settings["server"], settings["port"]);
                 try
